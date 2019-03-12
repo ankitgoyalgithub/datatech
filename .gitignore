@@ -2,4 +2,8 @@ settings.py
 static
 media
 
+<<<<<<< HEAD
 *.pyc
+=======
+.pyc
+>>>>>>> a0f4a608fe7c84a668de9f20b73acd9558972055
