@@ -1,5 +1,5 @@
 settings.py
 static
 media
-
-.pyc
+__pycache__
+*.pyc
