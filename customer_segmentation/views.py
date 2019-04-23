@@ -1,6 +1,19 @@
 from django.shortcuts import render
+from django.views import generic
 import pandas as pd
 from customer_segmentation.SegmentData import SegmentData
+
+class CustomerSegmentDashboard(generic.ListView):
+    template_name = "customer_segmentation.html"
+    context_object_name = "data"
+
+    def get_queryset(self):
+        data = dict()
+        return data
+
+def run():
+    #clustering algo
+    #model save
 
 # Create your views here.
 def input_method(input_dict):

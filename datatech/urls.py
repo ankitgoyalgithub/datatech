@@ -25,5 +25,6 @@ except ModuleNotFoundError:
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('cseg/', include('customer_segmentation.urls', namespace='customer_segmentation')),
     path('', include('portal.urls', namespace='portal'))
 ]
