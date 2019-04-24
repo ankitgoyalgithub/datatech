@@ -1,53 +1,25 @@
 /* globals Chart:false, feather:false */
-
 (function () {
     'use strict'
-  
-    feather.replace()
-  
-    // Graphs
-    var ctx = document.getElementById('myChart')
-    // eslint-disable-next-line no-unused-vars
-    var myChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [
-          'Sunday',
-          'Monday',
-          'Tuesday',
-          'Wednesday',
-          'Thursday',
-          'Friday',
-          'Saturday'
-        ],
-        datasets: [{
-          data: [
-            15339,
-            21345,
-            18483,
-            24003,
-            23489,
-            24092,
-            12034
-          ],
-          lineTension: 0,
-          backgroundColor: 'transparent',
-          borderColor: '#007bff',
-          borderWidth: 4,
-          pointBackgroundColor: '#007bff'
-        }]
-      },
-      options: {
-        scales: {
-          yAxes: [{
-            ticks: {
-              beginAtZero: false
-            }
-          }]
-        },
-        legend: {
-          display: false
-        }
+    feather.replace();
+
+    google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Clusters', '%'],
+          ['C1',35],
+          ['C2',52],
+          ['C3',13]
+        ]);
+        var options = {
+          title: 'Cluster Details',
+          is3D: true,
+          chartArea: {
+            left:"20%"
+          }
+        };
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
       }
-    })
   }())

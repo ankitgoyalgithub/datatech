@@ -14,6 +14,7 @@ class CustomerSegmentDashboard(generic.ListView):
 def run():
     #clustering algo
     #model save
+    pass
 
 # Create your views here.
 def input_method(input_dict):
