@@ -1,7 +1,22 @@
+import csv
+import json
+import pandas as pd
+
+from django.conf import settings
 from django.shortcuts import render
 from django.views import generic
-import pandas as pd
+from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
+
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+
 from customer_segmentation.SegmentData import SegmentData
+
+class JSONResponse(HttpResponse):
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
 
 class CustomerSegmentDashboard(generic.ListView):
     template_name = "customer_segmentation.html"
@@ -11,10 +26,28 @@ class CustomerSegmentDashboard(generic.ListView):
         data = dict()
         return data
 
-def run():
-    #clustering algo
-    #model save
-    pass
+"""
+API to Fetch the Data Set on Which Clustering Will be Performed
+"""
+def data_preview(request):
+    media_url = settings.MEDIA_ROOT
+    preview_file = open(media_url + '/data_files/pageview.csv')
+    field_names = ("ACCOUNT_ID", "AVERAGE_TIME_ON_PAGE", "EXITS", "PAGEVIEWS")
+    reader = csv.DictReader(preview_file, field_names)
+    out = json.dumps([row for row in reader])
+    return JSONResponse(out)
+
+
+"""
+API to Get the Distribution of Each Cluster.
+"""
+def cluster_details(request):
+    data =  {
+        "c1": 35,
+        "C2": 17,
+        "C3": 48
+    }
+    return JSONResponse(data)
 
 # Create your views here.
 def input_method(input_dict):

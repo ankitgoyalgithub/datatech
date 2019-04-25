@@ -8,5 +8,7 @@ from customer_segmentation import views
 app_name="portal"
 
 urlpatterns = [
-    url("^cust-seg-dashboard$", views.CustomerSegmentDashboard.as_view(), name='cust_seg_dashboard')
+    url("^cust-seg-dashboard$", views.CustomerSegmentDashboard.as_view(), name='cust_seg_dashboard'),
+    url("^cluster-detail$", views.cluster_details, name='cluster_details'),
+    url("^data-preview$", views.data_preview, name='data_preview')
 ]
