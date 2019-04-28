@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.views import generic
 from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 
+from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
@@ -26,17 +27,36 @@ class CustomerSegmentDashboard(generic.ListView):
         data = dict()
         return data
 
+class DataPreview(generic.ListView):
+    template_name = "data_preview.html"
+    context_object_name = "data"
+
+    def get_queryset(self):
+        data = dict()
+        media_url = settings.MEDIA_ROOT
+        preview_file = open(media_url + '/data_files/pageview.csv')
+        field_names = ("ACCOUNT_ID", "AVERAGE_TIME_ON_PAGE", "EXITS", "PAGEVIEWS")
+        reader = csv.DictReader(preview_file, field_names)
+        data_rows = [row for row in reader]
+        del data_rows[0]
+        data['cols'] = list(field_names)
+        data['rows'] = data_rows
+        return data
+
 """
 API to Fetch the Data Set on Which Clustering Will be Performed
 """
+@api_view(['GET'])
 def data_preview(request):
-    media_url = settings.MEDIA_ROOT
-    preview_file = open(media_url + '/data_files/pageview.csv')
-    field_names = ("ACCOUNT_ID", "AVERAGE_TIME_ON_PAGE", "EXITS", "PAGEVIEWS")
-    reader = csv.DictReader(preview_file, field_names)
-    out = json.dumps([row for row in reader])
-    return JSONResponse(out)
-
+    try:
+        media_url = settings.MEDIA_ROOT
+        preview_file = open(media_url + '/data_files/pageview.csv')
+        field_names = ("ACCOUNT_ID", "AVERAGE_TIME_ON_PAGE", "EXITS", "PAGEVIEWS")
+        reader = csv.DictReader(preview_file, field_names)
+        out = json.dumps([row for row in reader])
+        return JSONResponse(out)
+    except Exception:
+        return JSONResponse(json.dumps({"error": "Unable to Generate Preview"}))
 
 """
 API to Get the Distribution of Each Cluster.
