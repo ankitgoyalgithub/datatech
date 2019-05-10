@@ -43,6 +43,15 @@ class DataPreview(generic.ListView):
         data['rows'] = data_rows
         return data
 
+class AlgorithmsSelection(generic.ListView):
+    template_name = "select_algorithm.html"
+    context_object_name = "data"
+
+    def get_queryset(self):
+        data = dict()
+        data['algos'] = ['a1','a2','a3']
+        return data
+
 """
 API to Fetch the Data Set on Which Clustering Will be Performed
 """

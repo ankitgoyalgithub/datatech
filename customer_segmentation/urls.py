@@ -10,5 +10,6 @@ app_name="portal"
 urlpatterns = [
     url("^cust-seg-dashboard$", views.CustomerSegmentDashboard.as_view(), name='cust_seg_dashboard'),
     url("^data-preview$", views.DataPreview.as_view(), name='data_preview_page'),
+    url("^select-algorithm", views.AlgorithmsSelection.as_view(), name="select_algorithms"),
     url("^cluster-detail$", views.cluster_details, name='cluster_details')
 ]
