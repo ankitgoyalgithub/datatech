@@ -12,7 +12,6 @@ from pandas import Series
 
 #LOGGER = get_task_logger(__name__)
 
-
 # TODO
 # Always aggregate on Account and optionally Account+Date
 # Refactor account level Insights and any other for loops
@@ -74,12 +73,11 @@ class SegmentData(object):
             no_of_groups = 3
         else:
             no_of_groups = 5
-        #LOGGER.info("rid :[%s] number of groups %r:", self.request_id, no_of_groups, )
+
         matrix = result.groupby(self.cluster_label_column).mean()
         for col in matrix.columns:
             rank = []
-            # H = max(matrix[col])
-            # L = min(matrix[col])
+            
             level_col = []
             matrix_col = matrix[col].values if type(matrix[col]) == Series \
                 else matrix[col]
@@ -87,10 +85,7 @@ class SegmentData(object):
                 group_breaks = jenkspy.jenks_breaks(matrix_col, nb_class=4)
                 for value in matrix[col]:
                     level = ''
-                    # group = float((values - L) * no_of_groups /
-                    #  (H + 1.0 - L))
-                    # rank.append(group)  # try here with int, round,float and
-                    #  see insights output
+
                     if value >= group_breaks[4]:
                         level = 'Very High'
                         rank.append(5)
@@ -111,9 +106,7 @@ class SegmentData(object):
                 group_breaks = jenkspy.jenks_breaks(matrix_col, nb_class=2)
                 for value in matrix[col]:
                     level = ''
-                    # group = float((value - L) * no_of_groups / (H + 1 - L))
-                    # rank.append(group)  # try here with int, round,float and
-                    # see insights output
+                    
                     if value >= group_breaks[2]:
                         level = 'High'
                         rank.append(3)
@@ -142,23 +135,16 @@ class SegmentData(object):
     def _describe_cluster(self, data, col):
         clusters = data[col].unique()
         size_arr = data[col].value_counts() * 100.0 / data.shape[0]
-        # data.drop(col,axis=1,inplace=True)
         cluster_info = pd.DataFrame()
         for each_cluster in clusters:
             temp = data[data[col] == each_cluster].describe(
                 percentiles=[.1, .25, .5, .75, .9])
-            temp = temp.loc[
-                ['count', 'mean', 'std', 'min', '10%', '25%', '50%', '75%',
-                 '90%', 'max']]
+            temp = temp.loc[['count', 'mean', 'std', 'min', '10%', '25%', '50%', '75%','90%', 'max']]
             temp['Cluster_Name'] = each_cluster
-            # temp['Size'] = size_arr.ix[each_cluster]
             cluster_info = cluster_info.append(temp)
-        # cluster_info['Size']=cluster_info[col].value_counts().values*100.0
-        # /cluster_info.shape[0]
         if col in cluster_info:
             cluster_info.drop(col, axis=1, inplace=True)
-        cluster_info.set_index(['Cluster_Name', cluster_info.index],
-                               inplace=True)
+        cluster_info.set_index(['Cluster_Name', cluster_info.index], inplace=True)
         return cluster_info
 
     def _mad(self, data, axis=None):
@@ -188,8 +174,6 @@ class SegmentData(object):
 
     def _segment_data(self):
         data = self.data_frame
-        # original_col = list(data.columns)
-        # data = self.perform_outliers_detection(data, original_col)
         data = data.groupby(self.ID).mean()
         min_max_scaler = MinMaxScaler(copy=True)
         data_scaled = min_max_scaler.fit_transform(data[self.seg_col])
@@ -201,7 +185,6 @@ class SegmentData(object):
             k_means = KMeans(n_clusters=self.n_cluster, random_state=0)
 
             k_means.fit(data_scaled)
-            #self._validate_labels(k_means)
         accuracy = self.get_score(data_scaled, k_means)
         # return labelled original data for user friendly analysis
         data[self.cluster_label_column] = k_means.labels_
@@ -242,19 +225,9 @@ class SegmentData(object):
         for clusters in range(start_cluster, no_of_clusters + 1):
             k_means = KMeans(n_clusters=clusters, random_state=0)
             k_means.fit(data_scaled)
-            #self._validate_labels(k_means)
-            #LOGGER.info("rid :[%s] Cluster distribution is %r", self.request_id, Counter(k_means.labels_))
             accuracy = self.get_score(data_scaled, k_means)
-            #LOGGER.info("rid :[%s] the silhouette score is %r for no. clusters: %r", self.request_id, accuracy,
-            #            clusters)
             accuracy_mapping[accuracy] = k_means
-        #k_means = optimize(accuracy_mapping)
         return k_means
-
-#    def _validate_labels(self, kmeans):
-#        counter = Counter(kmeans.labels_)
-#        if len(counter) == 1:
-#            raise SegmentationError(ErrorCodes.DS_SG_0008)
 
     def run_segment(self):
         result, accuracy = self._segment_data()
@@ -294,28 +267,24 @@ class SegmentData(object):
                                                      cluster_label=self.cluster_label_column).sort_values(
             self.cluster_label_column)
 
-        #print ([self.ID, self.cluster_label_column])
-        #print (account_insights.head())
-        #print ('\n')
-        #account_name_df = self.data_frame[[self.ID, self.cluster_label_column]]
-        #account_name_df = account_name_df.drop_duplicates()
-        #account_insights = account_insights.merge(account_name_df, how='left',
-        #                                          left_on=self.ID,
-        #                                          right_on=self.ID)
         cluster_insights.fillna(0, inplace=True)
         account_insights.fillna(0, inplace=True)
         return account_insights,cluster_insights, rank[show_col], cluster_size
 
 
-if __name__ =='__main__':
-    df=pd.read_csv('/Users/mkumar/Desktop/datatech/pageview.csv')
+if __name__ == '__main__':
+    df=pd.read_csv('/Users/ankitgoyal/Documents/Projects/datatech/media/data_files/pageview.csv')
     print("=======")
     print(df.head())
     #data_frame, seg_col, ID=[], n_cluster=5,optimize_no_cluster='Y'):
-    obj=SegmentData(df,['Pageviews','Exits'],['Avg. Time on Page'],'Account Id',3,'N')
+    obj=SegmentData(df,['PAGEVIEWS','EXITS'],['AVERAGE_TIME_ON_PAGE'],'ACCOUNT_ID',3,'N')
     rank, account_insights, cluster_insights, cluster_size, accuracy =obj.run_segment()
     print ('Rank====================================','\n')
-    print (rank.head().T)
+    print (rank.head())
+    print("********")
+    for index, row in rank.iterrows():
+        print(index, row['Cluster_Size%'])
+    print("********")
     print ('====================================','\n','account_insights')
     print (account_insights.head().T)
     print ('====================================','\n','cluster_insights')

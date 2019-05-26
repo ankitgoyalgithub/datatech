@@ -1,5 +1,6 @@
 import csv
 import json
+import logging
 import pandas as pd
 
 from django.conf import settings
@@ -12,6 +13,8 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
 from customer_segmentation.SegmentData import SegmentData
+
+logger = logging.getLogger(__name__)
 
 class JSONResponse(HttpResponse):
     def __init__(self, data, **kwargs):
@@ -64,19 +67,56 @@ def data_preview(request):
         reader = csv.DictReader(preview_file, field_names)
         out = json.dumps([row for row in reader])
         return JSONResponse(out)
-    except Exception:
+    except Exception as e:
+        logger.error(e)
         return JSONResponse(json.dumps({"error": "Unable to Generate Preview"}))
 
 """
 API to Get the Distribution of Each Cluster.
 """
+@api_view(['GET'])
+def cluster_distribution(request):
+    try:
+        media_url = settings.MEDIA_ROOT
+        input_df = pd.read_csv(media_url + '/data_files/pageview.csv')
+        data = dict()
+        obj=SegmentData(input_df,['PAGEVIEWS','EXITS'],['AVERAGE_TIME_ON_PAGE'],'ACCOUNT_ID',3,'N')
+        #rank, account_insights, cluster_insights, cluster_size, accuracy =obj.run_segment()
+        rank = obj.run_segment()[0]
+        for index, row in rank.iterrows():
+            data["C" + str(index+1)] =  row['Cluster_Size%']
+        return JSONResponse(data)
+    except Exception as e:
+        logger.error(e)
+        raise e
+
+"""
+API to Get the Details of Each Cluster.
+"""
+@api_view(['GET'])
 def cluster_details(request):
-    data =  {
-        "c1": 35,
-        "C2": 17,
-        "C3": 48
-    }
-    return JSONResponse(data)
+    try:
+        media_url = settings.MEDIA_ROOT
+        input_df = pd.read_csv(media_url + '/data_files/pageview.csv')
+        data = list()
+        obj=SegmentData(input_df,['PAGEVIEWS','EXITS'],['AVERAGE_TIME_ON_PAGE'],'ACCOUNT_ID',3,'N')
+        rank, account_insights, cluster_insights, cluster_size, accuracy =obj.run_segment()
+
+        for index, row in rank.iterrows():
+            temp_details = dict()
+            temp_details['LABEL'] = index
+            temp_details['COUNT'] =  row['Cluster_Size_Count']
+            temp_details['AVERAGE_TIME_ON_PAGE'] =  row['AVERAGE_TIME_ON_PAGE']
+            temp_details['PAGEVIEWS'] =  row['PAGEVIEWS']
+            temp_details['EXITS'] =  row['EXITS']
+            temp_details['AVERAGE_TIME_ON_PAGE_LEVEL'] =  row['AVERAGE_TIME_ON_PAGE_Level']
+            temp_details['EXITS_LEVEL'] =  row['EXITS_Level']
+            temp_details['PAGEVIEWS_LEVEL'] =  row['PAGEVIEWS_Level']
+            data.append(temp_details)
+
+        return JSONResponse(data)
+    except Exception as e:
+        raise e
 
 # Create your views here.
 def input_method(input_dict):
