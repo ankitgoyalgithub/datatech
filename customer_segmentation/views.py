@@ -81,14 +81,13 @@ def cluster_distribution(request):
         input_df = pd.read_csv(media_url + '/data_files/pageview.csv')
         data = dict()
         obj=SegmentData(input_df,['PAGEVIEWS','EXITS'],['AVERAGE_TIME_ON_PAGE'],'ACCOUNT_ID',3,'N')
-        #rank, account_insights, cluster_insights, cluster_size, accuracy =obj.run_segment()
         rank = obj.run_segment()[0]
         for index, row in rank.iterrows():
             data["C" + str(index+1)] =  row['Cluster_Size%']
         return JSONResponse(data)
     except Exception as e:
         logger.error(e)
-        raise e
+        return JSONResponse(json.dumps({"error": "Unable to Fetch Cluster Distribution Data"}))
 
 """
 API to Get the Details of Each Cluster.
@@ -98,10 +97,12 @@ def cluster_details(request):
     try:
         media_url = settings.MEDIA_ROOT
         input_df = pd.read_csv(media_url + '/data_files/pageview.csv')
-        data = list()
+        data = dict()
         obj=SegmentData(input_df,['PAGEVIEWS','EXITS'],['AVERAGE_TIME_ON_PAGE'],'ACCOUNT_ID',3,'N')
-        rank, account_insights, cluster_insights, cluster_size, accuracy =obj.run_segment()
-
+        rank = obj.run_segment()[0]
+        data["rows"] = list()
+        data["columns"] = list()
+        
         for index, row in rank.iterrows():
             temp_details = dict()
             temp_details['LABEL'] = index
@@ -112,10 +113,53 @@ def cluster_details(request):
             temp_details['AVERAGE_TIME_ON_PAGE_LEVEL'] =  row['AVERAGE_TIME_ON_PAGE_Level']
             temp_details['EXITS_LEVEL'] =  row['EXITS_Level']
             temp_details['PAGEVIEWS_LEVEL'] =  row['PAGEVIEWS_Level']
-            data.append(temp_details)
+            data["rows"].append(temp_details)
 
+        data["columns"] = [
+            "LABEL", 
+            "COUNT", 
+            "AVERAGE_TIME_ON_PAGE",
+            "PAGEVIEWS",
+            "EXITS",
+            "AVERAGE_TIME_ON_PAGE_LEVEL",
+            "EXITS_LEVEL",
+            "PAGEVIEWS_LEVEL"
+            ]
         return JSONResponse(data)
     except Exception as e:
+        logger.error(e)
+        raise e
+
+"""
+API to Get the Details of Each Cluster.
+"""
+@api_view(['GET'])
+def account_insights(request):
+    try:
+        media_url = settings.MEDIA_ROOT
+        input_df = pd.read_csv(media_url + '/data_files/pageview.csv')
+        data = dict()
+        obj=SegmentData(input_df,['PAGEVIEWS','EXITS'],['AVERAGE_TIME_ON_PAGE'],'ACCOUNT_ID',3,'N')
+        account_insights = obj.run_segment()[1]
+
+        data["rows"] = list()
+        data["columns"] = list()
+        for index, row in account_insights.iterrows():
+            temp_details = dict()
+            temp_details['LABEL'] = index
+            temp_details['ACCOUNTID'] =  row['ACCOUNT_ID']
+            temp_details['AVERAGE_TIME_ON_PAGE'] =  row['AVERAGE_TIME_ON_PAGE']
+            temp_details['PAGEVIEWS'] =  row['PAGEVIEWS']
+            temp_details['CLUSTER'] =  row['clusterLabelColumn']
+            temp_details['PAGEVIEWS_LEVEL'] =  row['PAGEVIEWS_Level']
+            temp_details['EXITS_LEVEL'] =  row['EXITS_Level']
+            temp_details['MESSAGE'] =  row['message']
+            data["rows"].append(temp_details)
+        
+        data["columns"] = ["LABEL", "ACCOUNTID", "AVERAGE_TIME_ON_PAGE", "PAGEVIEWS", "CLUSTER", "PAGEVIEWS_LEVEL", "EXITS_LEVEL", "MESSAGE"]
+        return JSONResponse(data)
+    except Exception as e:
+        logger.error(e)
         raise e
 
 # Create your views here.

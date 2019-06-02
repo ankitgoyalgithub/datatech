@@ -32,24 +32,74 @@
 }())
 
 $(document).ready(function(){
+
+	/* Cluster Details Ajax Call */
 	$.ajax({
 		method: "GET",
 		url: "/cseg/cluster-details",
 		contentType: "application/json"
 	}).done(function(msg) {
-		for(let key in msg){
-			$('#cluster-details').append(
+		$('#dashboard-table-head').html('');
+		$('#dashboard-table-rows').html('');
+		let tableHeadStr = "";
+		for(let key in msg["columns"]){
+			tableHeadStr = tableHeadStr + '<th scope="col">' + msg["columns"][key] + '</th>'
+		}
+		$('#dashboard-table-head').append(
+			'<tr>' + tableHeadStr + '</tr>'
+		)
+		for(let key in msg["rows"]){
+			$('#dashboard-table-rows').append(
 				'<tr>' +
-					'<th scope="row">'+msg[key]['LABEL']+'</th>' +
-					'<td>'+msg[key]['COUNT']+'</td>' +
-					'<td>'+msg[key]['AVERAGE_TIME_ON_PAGE']+'</td>' +
-					'<td>'+msg[key]['EXITS']+'</td>' +
-					'<td>'+msg[key]['PAGEVIEWS']+'</td>' +
-					'<td>'+msg[key]['AVERAGE_TIME_ON_PAGE_LEVEL']+'</td>' +
-					'<td>'+msg[key]['EXITS_LEVEL']+'</td>' +
-					'<td>'+msg[key]['PAGEVIEWS_LEVEL']+'</td>' +
+					'<th scope="row">'+msg['rows'][key]['LABEL']+'</th>' +
+					'<td>'+msg['rows'][key]['COUNT']+'</td>' +
+					'<td>'+msg['rows'][key]['AVERAGE_TIME_ON_PAGE']+'</td>' +
+					'<td>'+msg['rows'][key]['EXITS']+'</td>' +
+					'<td>'+msg['rows'][key]['PAGEVIEWS']+'</td>' +
+					'<td>'+msg['rows'][key]['AVERAGE_TIME_ON_PAGE_LEVEL']+'</td>' +
+					'<td>'+msg['rows'][key]['EXITS_LEVEL']+'</td>' +
+					'<td>'+msg['rows'][key]['PAGEVIEWS_LEVEL']+'</td>' +
 				'</tr>'
 			)
 		}
+	});
+
+	/* On Dashboard Reload */
+	$('#cluster-insights-button').click(function() {
+		location.reload();
+	});
+
+	/* Account Insights Button */
+	$("#account-insights-button").click(function(event){
+		$('#dashboard-table-head').html('');
+		$('#dashboard-table-rows').html('');
+		$('#piechart').hide();
+		$.ajax({
+			method: "GET",
+			url: "/cseg/account-insights",
+			contentType: "application/json"
+		}).done(function(msg) {
+			let tableHeadStr = "";
+			for(let key in msg["columns"]){
+				tableHeadStr = tableHeadStr + '<th scope="col">' + msg["columns"][key] + '</th>'
+			}
+			$('#dashboard-table-head').append(
+				'<tr>' + tableHeadStr + '</tr>'
+			)
+			for(let key in msg["rows"]){
+				$('#dashboard-table-rows').append(
+					'<tr>' +
+						'<th scope="row">'+msg['rows'][key]['LABEL']+'</th>' +
+						'<td>'+msg['rows'][key]['ACCOUNTID']+'</td>' +
+						'<td>'+msg['rows'][key]['AVERAGE_TIME_ON_PAGE']+'</td>' +
+						'<td>'+msg['rows'][key]['PAGEVIEWS']+'</td>' +
+						'<td>'+msg['rows'][key]['CLUSTER']+'</td>' +
+						'<td>'+msg['rows'][key]['PAGEVIEWS_LEVEL']+'</td>' +
+						'<td>'+msg['rows'][key]['EXITS_LEVEL']+'</td>' +
+						'<td>'+msg['rows'][key]['MESSAGE']+'</td>' +
+					'</tr>'
+				)
+			}
+		});
 	});
 });
