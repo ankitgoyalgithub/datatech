@@ -162,6 +162,38 @@ def account_insights(request):
         logger.error(e)
         raise e
 
+"""
+API to Get the Details of Each Cluster.
+"""
+@api_view(['GET'])
+def dist_plot(request):
+    try:
+        media_url = settings.MEDIA_ROOT
+        input_df = pd.read_csv(media_url + '/data_files/pageview.csv')
+        data = dict()
+        obj=SegmentData(input_df,['PAGEVIEWS','EXITS'],['AVERAGE_TIME_ON_PAGE'],'ACCOUNT_ID',3,'N')
+        account_insights = obj.run_segment()[1]
+
+        data["rows"] = list()
+        data["columns"] = list()
+        for index, row in account_insights.iterrows():
+            temp_details = dict()
+            temp_details['LABEL'] = index
+            temp_details['ACCOUNTID'] =  row['ACCOUNT_ID']
+            temp_details['AVERAGE_TIME_ON_PAGE'] =  row['AVERAGE_TIME_ON_PAGE']
+            temp_details['PAGEVIEWS'] =  row['PAGEVIEWS']
+            temp_details['CLUSTER'] =  row['clusterLabelColumn']
+            temp_details['PAGEVIEWS_LEVEL'] =  row['PAGEVIEWS_Level']
+            temp_details['EXITS_LEVEL'] =  row['EXITS_Level']
+            temp_details['MESSAGE'] =  row['message']
+            data["rows"].append(temp_details)
+        
+        data["columns"] = ["LABEL", "ACCOUNTID", "AVERAGE_TIME_ON_PAGE", "PAGEVIEWS", "CLUSTER", "PAGEVIEWS_LEVEL", "EXITS_LEVEL", "MESSAGE"]
+        return JSONResponse(data)
+    except Exception as e:
+        logger.error(e)
+        raise e
+
 # Create your views here.
 def input_method(input_dict):
     try:
