@@ -2,6 +2,7 @@ import csv
 import json
 import logging
 import pandas as pd
+import uuid
 
 from django.conf import settings
 from django.shortcuts import render
@@ -24,6 +25,14 @@ class JSONResponse(HttpResponse):
 
 class CustomerSegmentDashboard(generic.ListView):
     template_name = "customer_segmentation.html"
+    context_object_name = "data"
+
+    def get_queryset(self):
+        data = dict()
+        return data
+
+class FileUpload(generic.ListView):
+    template_name = "file_upload.html"
     context_object_name = "data"
 
     def get_queryset(self):
@@ -54,6 +63,28 @@ class AlgorithmsSelection(generic.ListView):
         data = dict()
         data['algos'] = ['a1','a2','a3']
         return data
+
+"""
+API for Uploading the File on Which Clustering Will be Performed
+"""
+@api_view(['POST'])
+def upload_file(request):
+    try:
+        media_url = settings.MEDIA_ROOT
+        uploaded_file = request.FILES['uploadedFile']
+        filename = str(uuid.uuid4())+'.csv'
+
+        with open(media_url+'/uploaded_files/'+filename, "wb+") as f:
+            for chunk in uploaded_file.chunks():
+                f.write(chunk)
+        out = {
+            "message": "Upload Successful", 
+            "filePath": settings.DOMAIN + "/uploaded_files/" + filename
+        }
+        return JSONResponse(out)
+    except Exception as e:
+        logger.error(e)
+        return JSONResponse(json.dumps({"error": "Unable to Generate Preview"}))
 
 """
 API to Fetch the Data Set on Which Clustering Will be Performed
