@@ -54,7 +54,8 @@
                 contentType: false,
                 data: upload_file,
                 success: function(data) {
-                    alert(data["message"] + " at " + data["filePath"])
+                    // alert(data["message"] + " at " + data["filePath"])
+                    window.location.href = '/cseg/data-preview'
                 }
             });
         })
