@@ -15,5 +15,6 @@ urlpatterns = [
     url("^contact$", TemplateView.as_view(template_name='contact.html'), name='contact'),
     url("^pricing$", TemplateView.as_view(template_name='pricing.html'), name='pricing'),
     url("^churn$", TemplateView.as_view(template_name='churn.html'), name='churn'),
+    url("^customer-segmentation$", TemplateView.as_view(template_name='customer_segmentation.html'), name='churn'),
     url("", TemplateView.as_view(template_name='index.html'), name='index')
 ]

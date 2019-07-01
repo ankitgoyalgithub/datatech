@@ -1,0 +1,109 @@
+{% extends "base.html" %} {% load static %} {% block page_specific_css %} {% endblock %} {% block body %}
+<div class="main-wrapper">
+    <div role="navigation" class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="compressed">
+                <div class="navbar-header">
+                    <button data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+                            <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span><span
+                                class="icon-bar"></span><span class="icon-bar"></span>
+                        </button>
+                    <a href="#" class="navbar-brand compressed">
+                        <!-- <img src="{% static 'img/logo_condensed.png' %}" alt="" data-src="{% static 'img/logo_condensed.png' %}" data-src-retina="{% static 'img/logo2x.png' %}" width="119" height="22" /></a> -->
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="tour">Tour</a></li>
+                        <li><a href="blog">Blog</a></li>
+                        <li><a href="contact">Contact</a></li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+    <div class="section first white">
+        <div style="margin-top:120px;">
+        </div>
+    </div>
+    <div style="background-color: white; width:80%; padding:3rem; font-size: 18px; margin-bottom: 2rem; font-weight:500;" class="container">
+        <h2 style="text-align:center; font-weight:bold;">
+            Customer Segmentation
+        </h2>
+        <p>
+            Companies employing customer segmentation operate under the fact that every customer is different and that their marketing efforts would be better served if they target specific, smaller groups with messages that those consumers would find relevant and
+            lead them to buy something, renew or upsell. It’s helpful regardless if you’re working on a marketing campaign, a UX-related research project, or a sales outreach.
+        </p>
+        <div style="text-align:center;margin-top:2rem; margin-bottom:2rem;">
+            <img src="{% static 'img/blog_cust_seg.png' %}">
+        </div>
+        <p>
+            Customer segments are usually determined on similarities, such as account characteristics, preferences, usage behaviours or overall satisfaction that should correlate with the same behaviours that drive customer profitability.
+        </p>
+        <p>
+            A customer segmentation model allows for the effective allocation of marketing resources and the maximisation of renewal, cross and up-selling opportunities. When a group of customers is sent an email that is specific to their needs, it’s easier for companies
+            to send those customers special offers. It also helps in increasing the product adoption, overall engagement by targeting the specific group of customers wherever attention required. Other benefits of customer segmentation include staying
+            a step ahead of the competition and identifying new products that existing or potential customers could be interested in.
+        </p>
+        <p>
+            Segmentation allows businesses to make better use of their marketing budgets, gain a competitive edge over rival companies and, importantly, demonstrate a better knowledge of your customers’ needs and wants. It can also help:
+            <ul>
+                <li>Marketing Efficiency</li>
+                <li>Determine New Market opportunities</li>
+                <li>Better Brand Strategy</li>
+                <li>Improve Distribution Strategies</li>
+                <li>Customer Retention</li>
+            </ul>
+        </p>
+        <p>
+            <h2 style="font-weight:bold;">Why Segmentation Fails ?</h2>
+            <h3 style="font-weight:bold;">1. Segments missing the actual business goal </h3>
+            <p>
+                It is important that any marketing campaign you’re creating is related to your business’ goals. No matter whether that’s gaining more customers, increasing your customer lifetime value (CLV) or simply generating more revenue, your segmented campaigns
+                need to help you work towards it.<br> For example, <br> Let’s say you have a segment of customers and their subscription for your SaaS product is up for renewal soon. What type of content would you send them ? <br>
+                <ul>
+                    <li>Renewal-related information and promotional offers related to renewal</li>
+                    <li>Information about new products and upgrades</li>
+                </ul>
+                In case you're not sure about your goal for segmentation, you might assess and define your goals based on criteria: <br>
+                <ul>
+                    <li>Specific</li>
+                    <li>Measurable</li>
+                    <li>Achievable</li>
+                    <li>Relevant</li>
+                    <li>Time Based</li>
+                </ul>
+            </p>
+            <h3 style="font-weight:bold;">2. Segmenting based on Instinct, not on Concrete data</h3>
+            <p>Segmentation needs to be data driven rather than just based on the customer profile or personas. Backing up your segments with concrete data can help to avoid those PR disasters
+            </p>
+            <h3 style="font-weight:bold;">3. Data Issues: Insufficient data, Dirty Data, missing important metrics</h3>
+            <ul>
+                <li>
+                    <h4>Segment created on limited data</h4>
+                    <p>If segment is created on small set of fields or variables, marketing strategy will be limited by that information Remember: While your campaigns shouldn’t be based on guesswork, they shouldn’t be based on limited data, either.
+                    </p>
+                </li>
+                <li>
+                    <h4>Segment created on Dirty data</h4>
+                    <p>
+                        Input data needs to be pre-processed, normalized and treated for transformation and imputations
+                    </p>
+                </li>
+            </ul>
+            <h3 style="font-weight:bold;">4. Observational metrics in segment</h3>
+            <p>Typically we create segments based on available inputs and straight away start using it for campaign, alerts or other activities. Here we're ignoring the assessment of built segments based on the business driving metrics. For ex: what is the
+                average rate of renewal in a particular segment, Is the revenue distribution across segments make sense or it needs to be re-segmented
+            </p>
+            <h3 style="font-weight:bold;">5. Monitoring segment performance over time</h3>
+            <p>Businesses forget to compare one segment’s performance with the other when evaluating their marketing strategy.Tweaking needs to be done based on what you have already got.Tracking segment performance over time will allow you to measure the
+                improvement in your marketing strategy for that particular group of people
+            </p>
+        </p>
+    </div>
+</div>
+{% block page_specific_js %}
+<script src="{% static 'plugins/modernizr.custom.js' %}" type="text/javascript"></script>
+<script type="text/javascript" src="{% static 'plugins/jquery-isotope/jquery.isotope.js' %}"></script>
+{% endblock %} {% endblock %}
